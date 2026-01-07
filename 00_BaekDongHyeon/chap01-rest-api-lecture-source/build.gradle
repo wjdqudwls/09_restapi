@@ -25,6 +25,15 @@ repositories {
 }
 
 dependencies {
+    /* Validation */
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    /* hateoas */
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+
+    /* Swagger */
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
