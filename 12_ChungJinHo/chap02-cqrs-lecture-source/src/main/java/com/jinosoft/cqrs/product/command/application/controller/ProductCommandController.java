@@ -2,6 +2,7 @@ package com.jinosoft.cqrs.product.command.application.controller;
 
 import com.jinosoft.cqrs.common.dto.ApiResponse;
 import com.jinosoft.cqrs.product.command.application.dto.request.ProductCreateRequest;
+import com.jinosoft.cqrs.product.command.application.dto.request.ProductUpdateRequest;
 import com.jinosoft.cqrs.product.command.application.dto.response.ProductCommandResponse;
 import com.jinosoft.cqrs.product.command.application.service.ProductCommandService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,26 @@ public class ProductCommandController {
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(ApiResponse.success(response));
+  }
+
+  @PutMapping("/products/{productCode}")
+  public ResponseEntity<ApiResponse<Void>> updateProduct(
+      @PathVariable("productCode") Long productCode,
+      @RequestPart @Validated ProductUpdateRequest productUpdateRequest,
+      @RequestPart(required = false) MultipartFile productImg
+  ) {
+    productCommandService.updateProduct(productCode,productUpdateRequest,productImg);
+
+    return ResponseEntity.ok(ApiResponse.success(null));
+  }
+
+  @DeleteMapping("/products/{productCode}")
+  public ResponseEntity<ApiResponse<Void>> deleteProduct(
+      @PathVariable("productCode") Long productCode
+  ){
+    productCommandService.deleteProduct(productCode);
+
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success(null));
   }
 
 }
