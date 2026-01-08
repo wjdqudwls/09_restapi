@@ -1,5 +1,5 @@
 ### 상품 상세 조회
-GET http://localhost:8080/products/10001
+GET http://localhost:8080/products/22
 Accept: application/json # 응답 데이터의 형식을 지정
 
 ### 상품 목록 조회 - 1페이지 10개, 조건 X
@@ -54,3 +54,31 @@ Content-Type: image/png
 
 < ./sample.png
 --boundary--
+
+### 상품 수정
+# @RequestPart를 사용하므로 multipart/form-data로 전송
+# productImg는 required=false 이므로, 이미지를 수정하지 않을 경우 해당 파트를 생략해도 됨
+PUT http://localhost:8080/products/22
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="productUpdateRequest"
+Content-Type: application/json
+
+{
+  "productName": "1+1 크래미",
+  "productPrice": 5700,
+  "productDescription": "할인행사 (3백원할인)",
+  "categoryCode": 2,
+  "productStock": 100,
+  "status": "USABLE"
+}
+--boundary
+Content-Disposition: form-data; name="productImg"; filename="sample.png"
+Content-Type: image/png
+
+< ./sample.png
+--boundary--
+
+### 상품 삭제
+DELETE http://localhost:8080/products/22
