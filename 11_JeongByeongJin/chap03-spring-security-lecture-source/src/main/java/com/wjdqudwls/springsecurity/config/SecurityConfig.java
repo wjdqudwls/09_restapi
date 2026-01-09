@@ -3,6 +3,8 @@ package com.wjdqudwls.springsecurity.config;
 
 import com.wjdqudwls.springsecurity.jwt.JwtAuthenticationFilter;
 import com.wjdqudwls.springsecurity.jwt.JwtTokenProvider;
+import com.wjdqudwls.springsecurity.jwt.RestAccessDeniedHandler;
+import com.wjdqudwls.springsecurity.jwt.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,8 @@ public class SecurityConfig {
 
   private final JwtTokenProvider jwtTokenProvider;
   private final UserDetailsService userDetailsService;
+  private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+  private final RestAccessDeniedHandler restAccessDeniedHandler;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -47,10 +51,20 @@ public class SecurityConfig {
         .sessionManagement(session ->
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+        /* 인증, 인가 실패 핸들러 추가 */
+        .exceptionHandling(exception -> exception
+            .authenticationEntryPoint(restAuthenticationEntryPoint)
+            .accessDeniedHandler(restAccessDeniedHandler)
+        )
+
         // 요청 http method, url 기준으로 인증, 인가 필요 여부를 설정
         .authorizeHttpRequests(auth -> auth
             // 회원 가입은 누구나 허용(인증 필요 없음)
-            .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/auth/login").permitAll()
+            .requestMatchers(HttpMethod.POST
+                , "/api/v1/users"
+                , "/api/v1/auth/login"
+                , "api/v1/auth/refresh"
+                , "/api/v1/admin").permitAll()
             // 내 정보 조회는 USER 권한이 필요
             .requestMatchers(HttpMethod.GET, "api/v1/users/me").hasAuthority("USER")
             // 위 요청을 제외한 나머지 요청은 인증이 필요함

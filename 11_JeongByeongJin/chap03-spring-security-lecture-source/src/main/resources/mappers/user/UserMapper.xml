@@ -8,6 +8,6 @@
     </select>
 
     <select id="findAllUsers" resultType="UserDTO">
-        SELECT username, role FROM users WHERE role = 'USER'
+        SELECT username, role FROM users
     </select>
 </mapper>

@@ -2,10 +2,12 @@ package com.wjdqudwls.springsecurity.query.service;
 
 import com.wjdqudwls.springsecurity.query.dto.UserDTO;
 import com.wjdqudwls.springsecurity.query.dto.UserDetailResponse;
+import com.wjdqudwls.springsecurity.query.dto.UserListResponse;
 import com.wjdqudwls.springsecurity.query.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +23,14 @@ public class UserQueryService {
     ).orElseThrow(() -> new RuntimeException("사용자 찾지 못함"));
     return UserDetailResponse.builder()
         .user(user)
+        .build();
+  }
+
+  public UserListResponse getAllUser() {
+    List<UserDTO> users = userMapper.findAllUsers();
+
+    return UserListResponse.builder()
+        .users(users)
         .build();
   }
 }

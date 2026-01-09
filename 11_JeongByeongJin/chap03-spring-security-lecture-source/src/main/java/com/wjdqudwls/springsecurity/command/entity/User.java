@@ -28,4 +28,9 @@ public class User {
   public void setEncodedPassword(String encodedPassword){
     this.password = encodedPassword;
   }
+
+  /* 권한 변경 메서드 */
+  public void modifyRole(String role) {
+    this.role = UserRole.valueOf(role);
+  }
 }

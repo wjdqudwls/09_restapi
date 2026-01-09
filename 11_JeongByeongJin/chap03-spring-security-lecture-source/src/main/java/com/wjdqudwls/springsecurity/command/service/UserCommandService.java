@@ -32,4 +32,22 @@ public class UserCommandService {
     userRepository.save(user);
   }
 
+  @Transactional
+  public void registAdmin(UserCreateRequest userCreateRequest){
+
+    /* request(DTO) -> Entity */
+    User user = modelMapper.map(userCreateRequest, User.class);
+
+    /* 비밀번호를 암호화 하여 Entity에 세팅 */
+    user.setEncodedPassword(
+        passwordEncoder.encode(userCreateRequest.getPassword())
+    );
+
+    /* 권한 변경 */
+    user.modifyRole("ADMIN");
+
+    /* 저장 */
+    userRepository.save(user);
+  }
+
 }

@@ -2,9 +2,11 @@ package com.wjdqudwls.springsecurity.query.controller;
 
  import com.wjdqudwls.springsecurity.common.ApiResponse;
  import com.wjdqudwls.springsecurity.query.dto.UserDetailResponse;
+ import com.wjdqudwls.springsecurity.query.dto.UserListResponse;
  import com.wjdqudwls.springsecurity.query.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
  import org.springframework.http.ResponseEntity;
+ import org.springframework.security.access.prepost.PreAuthorize;
  import org.springframework.security.core.annotation.AuthenticationPrincipal;
  import org.springframework.security.core.userdetails.UserDetails;
  import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +32,15 @@ public class UserQueryController {
       ){
     UserDetailResponse response
         = userQueryService.getUserDetail(userDetails.getUsername());
+    return ResponseEntity.ok(ApiResponse.success(response));
+  }
+
+  /* 관리자 권한을 가진 회원만 가능한 요청 */
+  /* 회원 전체 목록 조회 */
+  @PreAuthorize("hasAnyAuthority('ADMIN')") // 메서드 수행 전 인증 절차 수행
+  @GetMapping("/admin/users")
+  public ResponseEntity<ApiResponse<UserListResponse>> getUsers(){
+    UserListResponse response = userQueryService.getAllUser();
     return ResponseEntity.ok(ApiResponse.success(response));
   }
 }
