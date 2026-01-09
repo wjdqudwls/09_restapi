@@ -16,6 +16,7 @@ public enum ErrorCode {
   FILE_DELETE_ERROR("20002", "파일 삭제에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
   // 입력 값 검증 오류
+
   VALIDATION_ERROR("40001", "입력 값 검증 오류입니다.", HttpStatus.BAD_REQUEST),
 
   // 그 외 기타 오류

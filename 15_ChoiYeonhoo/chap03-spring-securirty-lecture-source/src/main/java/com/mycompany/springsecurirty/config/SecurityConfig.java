@@ -2,6 +2,8 @@ package com.mycompany.springsecurirty.config;
 
 import com.mycompany.springsecurirty.jwt.JwtAuthenticationFilter;
 import com.mycompany.springsecurirty.jwt.JwtTokenProvider;
+import com.mycompany.springsecurirty.jwt.RestAccessDeniedHandler;
+import com.mycompany.springsecurirty.jwt.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,8 @@ public class SecurityConfig {
 
   private final JwtTokenProvider jwtTokenProvider;
   private final UserDetailsService userDetailsService;
+  private final RestAccessDeniedHandler restAccessDeniedHandler;
+  private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
   @Bean
   public PasswordEncoder passwordEncoder(){
@@ -43,11 +47,21 @@ public class SecurityConfig {
         // -> 모든 요청에 독립적, 인증 정보는 클라이언트 요청 시 전달된 토큰에 의지함
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+        /* 인증, 인가 실패 핸들러 추가 */
+        .exceptionHandling(exception ->
+            exception
+                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                .accessDeniedHandler(restAccessDeniedHandler)
+        )
         // 요청 http method, url 기준으로 인증, 인가 필요 여부를 설정
         .authorizeHttpRequests(auth
-            // 회원 가입,로그인은 누구나 허용
             -> auth
-            .requestMatchers(HttpMethod.POST,"/api/v1/users","api/v1/auth/login").permitAll()
+            // 회원 가입,로그인은 누구나 허용
+            .requestMatchers(HttpMethod.POST
+                ,"/api/v1/users"
+                ,"api/v1/auth/login"
+                ,"api/v1/auth/refresh"
+                ,"api/v1/admin").permitAll()
             // 내 정보 조회는 유저 권한이 필요
             .requestMatchers(HttpMethod.GET,"api/v1/users/me").hasAuthority("USER")
             // 위 요청을 제외한 나머지 요청은 인증이 필요함.

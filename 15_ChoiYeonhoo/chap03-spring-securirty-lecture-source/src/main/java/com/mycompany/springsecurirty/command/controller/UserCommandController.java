@@ -4,7 +4,6 @@ package com.mycompany.springsecurirty.command.controller;
 import com.mycompany.springsecurirty.command.dto.UserCreateRequest;
 import com.mycompany.springsecurirty.command.service.UserCommandService;
 import com.mycompany.springsecurirty.common.ApiResponse;
-import com.mycompany.springsecurirty.query.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class UserCommandController {
 
   private final UserCommandService userCommandService;
 
-  /* 회원 가입 */
+  /* 회원 가입 - USER 권한 */
   @PostMapping("/users")
   public ResponseEntity<ApiResponse<Void>> register(
       @RequestBody UserCreateRequest request){
@@ -30,6 +29,19 @@ public class UserCommandController {
    return ResponseEntity
        .status(HttpStatus.CREATED) // 201 Create(삽입/저장) 성공
        .body(ApiResponse.success(null));
+
+  }
+
+  /* 회원 가입 - ADMIN 권한 */
+  @PostMapping("/admin")
+  public ResponseEntity<ApiResponse<Void>> registerAdmin(
+      @RequestBody UserCreateRequest request){
+
+    userCommandService.registAdmin(request);
+
+    return ResponseEntity
+        .status(HttpStatus.CREATED) // 201 Create(삽입/저장) 성공
+        .body(ApiResponse.success(null));
 
   }
 }

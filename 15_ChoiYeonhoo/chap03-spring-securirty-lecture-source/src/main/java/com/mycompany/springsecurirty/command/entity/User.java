@@ -29,4 +29,8 @@ public class User {
   public void setEncodedPassword(String encodedPassword){
     this.password = encodedPassword;
   }
+
+  public void modifyRole(String role) {
+    this.role = UserRole.valueOf(role);
+  }
 }

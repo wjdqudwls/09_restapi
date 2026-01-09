@@ -54,5 +54,60 @@ public class AuthService {
         .build();
   }
 
+  /* refresh token 검증 후 새 토큰 발급 서비스 */
+  public TokenResponse refreshToken(String provideRefreshToken) {
 
+    // refresh token 유효성 검사
+    jwtTokenProvider.validateToken(provideRefreshToken);
+
+    // 전달 받은 refresh token에서 사용자 이름(username) 얻어오기
+    String username = jwtTokenProvider.getUsernameFromJWT(provideRefreshToken);
+
+    // DB에서 username이 일치하는 행의 refresh token 조회
+    RefreshToken storedToken = authRepository.findById(username)
+        .orElseThrow(()-> new BadCredentialsException("해당 유저로 조회되는 refresh 토큰 없음"));
+
+    // 요청 시 전달 받은 token과
+    // DB에 저장 된 토큰이 일치하는지 확인
+    if(!storedToken.getToken().equals(provideRefreshToken)){
+      throw new BadCredentialsException("refresh token 이 일치하지 않음");
+    }
+
+    // 요청 시 전달 받은 token의 만료 기간이 현재 시간보다 과거인지 확인
+    // (만료 기간이 지났는지 확인)
+    if(storedToken.getExpiryDate().before(new Date())){
+      throw new BadCredentialsException("refresh token 이 만료됨");
+    }
+
+    // username이 일치하는 회원(User) 조회
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(()->new BadCredentialsException("해당 유저 없음"));
+
+    // 새 토큰 발급
+    String accessToken = jwtTokenProvider.createToken(user.getUsername(),user.getRole().name());
+    String refreshToken = jwtTokenProvider.createRefreshToken(user.getUsername(),user.getRole().name());
+
+    // RefreshToken 엔티티 생성(저장용)
+    RefreshToken tokenEntity = RefreshToken.builder()
+        .username(username)
+        .token(refreshToken)
+        .expiryDate(new Date(System.currentTimeMillis() + jwtTokenProvider.getRefreshExpiration()))
+        .build();
+
+    //DB 저장 (PK 행이 이미 존재 -> UPDATE)
+    authRepository.save(tokenEntity);
+
+    return TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+  }
+
+  /* DB refreshToken 삭제 (로그 아웃) */
+  public void logout(String refreshToken) {
+
+    /* refresh Token 검증 */
+    jwtTokenProvider.validateToken(refreshToken);
+
+    String username = jwtTokenProvider.getUsernameFromJWT(refreshToken);
+    
+    authRepository.deleteById(username); // DB 에서 username이 일치하는 행 삭제
+  }
 }
