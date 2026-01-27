@@ -2,6 +2,7 @@ package com.ohgiraffers.cqrs.product.command.application.controller;
 
 import com.ohgiraffers.cqrs.common.dto.ApiResponse;
 import com.ohgiraffers.cqrs.product.command.application.dto.request.ProductCreateRequest;
+import com.ohgiraffers.cqrs.product.command.application.dto.request.ProductUpdateRequest;
 import com.ohgiraffers.cqrs.product.command.application.dto.response.ProductCommandResponse;
 import com.ohgiraffers.cqrs.product.command.application.service.ProductCommandService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,37 @@ public class ProductCommandController {
         .status(HttpStatus.CREATED)
         .body(ApiResponse.success(response));
   }
+
+  /* 상품 수정 */
+  @PutMapping("/products/{productCode}")
+  public ResponseEntity<ApiResponse<Void>> updateProduct(
+      @PathVariable("productCode") Long productCode,
+      @RequestPart @Validated ProductUpdateRequest productUpdateRequest,
+      @RequestPart(required = false) MultipartFile productImg
+      ){
+
+    productCommandService.updateProduct(
+        productCode,
+        productUpdateRequest,
+        productImg
+    );
+
+    return ResponseEntity.ok(ApiResponse.success(null));
+  }
+
+
+  /* 상품 삭제 */
+  @DeleteMapping("/products/{productCode}")
+  public ResponseEntity<ApiResponse<Void>> deleteProduct(
+      @PathVariable Long productCode
+  ){
+    productCommandService.deleteProduct(productCode);
+
+    return ResponseEntity
+        .status(HttpStatus.NO_CONTENT)
+        .body(ApiResponse.success(null));
+  }
+
 
 
 }
