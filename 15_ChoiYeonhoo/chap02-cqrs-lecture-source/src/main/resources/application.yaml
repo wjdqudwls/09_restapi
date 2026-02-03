@@ -1,0 +1,24 @@
+# Spring Profile
+# Active에 작성된 이름에 따라
+# 프로그램 실행 시 application-{active}.yaml 파일을 불러와 실행
+spring:
+  profiles:
+    active: dev
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: mappers/**/*.xml
+  type-aliases-package: com.mycompany.cqrs.product.query.dto
+
+# dev
+#spring:
+#  datasource:
+#    driver-class-name: {driver class}
+#    url: jdbc:mariadb://{ip}:{port}/{database}
+#    username: {user}
+#    password: {password}
+#
+#image:
+#  image-dir: {이미지 저장 경로}
+#  image-url: {이미지 요청 매핑 URL}

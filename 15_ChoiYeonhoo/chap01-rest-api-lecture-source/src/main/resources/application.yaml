@@ -1,1 +1,12 @@
-spring.application.name=chap01-rest-api-lecture-source
+spring:
+  application:
+    name: chap01-rest-api-lecture-source
+
+springdoc:
+  ## Swagger가 문서로 만들 API를 스캔할 패키지 지정
+  packages-to-scan: com.mycompany.restapi
+
+  ## consumes : Swagger가 기본적으로 지원하는 요청의 Content Type 지정
+  ## produces : Swagger가 기본적으로 지원하는 응답의 Content Type 지정
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
