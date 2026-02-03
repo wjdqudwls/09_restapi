@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://221.151.189.125:20000/cqrs
+    username: swcamp
+    password: swcamp
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: mappers/**/*.xml
+  type-aliases-package: com.wjdqudwls.cqrs.product.query.dto
+
+image:
+  image-dir: C:/upload/productimg
+  image-url: http://localhost:8080/productimgs/

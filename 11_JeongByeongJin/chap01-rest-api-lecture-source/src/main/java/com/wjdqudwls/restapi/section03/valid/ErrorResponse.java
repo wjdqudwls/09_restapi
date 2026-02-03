@@ -1,0 +1,15 @@
+package com.wjdqudwls.restapi.section03.valid;
+
+import lombok.*;
+
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+public class ErrorResponse {
+  /* 예외 발생 시 에러 메세지를 전달하는 용도의 객체 */
+  private String code;
+  private String description;
+  private String detail;
+
+}
